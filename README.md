@@ -20,7 +20,8 @@ This is a application that automatically vibe code for you (small application) a
 }
 ```
 4. Then use curl to give your task in a json format like this using post method (You can use testfully or thunder client in vs code extension if you are not familier with curl )
-   ```{
+   ```
+   {
     "email": "xyz@abc.com",
     "secret": "I_love_anime",
     "task": "car-racing-game-new",
@@ -46,6 +47,6 @@ This is a application that automatically vibe code for you (small application) a
     ],
     "evaluation_url": "https://webhook.site/your url bro",
     "attachments": []
-   }```
-
+   }
+   ```
  5. And wait for few seconds to minute (the time will be directly proportional to the intensity of task)
