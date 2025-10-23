@@ -5,7 +5,7 @@ This is a application that automatically vibe code for you (small application) a
 # How to set this 
 
 1. Download all the files and save it
-2. Create a github pat (Personal Access Token) (can be a fine-grained or classic) and copy it
+2. Create a github pat (Personal Access Token) (can be a fine-grained or classic) give the required permissions like code,administration, actions and pages copy it
 3. Next create a gemini api key (this code will only work for gemini api)
 4. Set a secret key which is required and necessary
 
