@@ -1,19 +1,24 @@
 # AutoDev
 This is a application that automatically vibe code for you (small application) and automatically make a repo and pushes the code for you
 
+Powered by Google's **Gemini 2.0 Flash** (via API) it takes the tasks and generates the necessary HTML/CSS/JS code, and pushes it to a new Github repository, and deploys it live Github Pages-all without human intervention.
+
 
 # How to set this 
 
-1. Download all the files and save it
+1. Clone the repo
+  ``` git clone https://github.com/soumyadiphazari/autodev ```
 2. Create a github pat (Personal Access Token) (can be a fine-grained or classic) give the required permissions like code,administration, actions and pages copy it
-3. Next create a gemini api key (this code will only work for gemini api)
+   * Go to GitHub Settings -> Developer Settings -> Personal access tokens.
+   * Create a token (Classic or Fine-grained) with **repo**, **workflow**, **admin:repo_hook**, and **pages**   permissions.
+3. Next create a gemini api key (this code will only work for gemini api) [Google AI Studio](https://aistudio.google.com/).
 4. Set a secret key which is required and necessary
 
 # How can you use it locally on your machine
 
 1. Install python and installs the packages using ```pip install -r requirements.txt``` (I will suggest you to create a virtual environment and use it so that you don't mess up with your global python)
 2. Then run ```uvicorn main:app --reload``` to run the code
-3.  If you click on the localhost link you should get a ```INFO:     127.0.0.1:1415 - "GET / HTTP/1.1" 200 OK``` and also a message in a json format in the browser
+3.  If you click on the localhost link you should get a ```INFO: 127.0.0.1:1415 - "GET / HTTP/1.1" 200 OK``` and also a message in a json format in the browser
  ```
 {
   "message": "Task Receiver Service running. POST /ready to submit."
