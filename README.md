@@ -3,6 +3,28 @@ This is a application that automatically vibe code for you (small application) a
 
 Powered by Google's **Gemini 2.0 Flash** (via API) it takes the tasks and generates the necessary HTML/CSS/JS code, and pushes it to a new Github repository, and deploys it live Github Pages-all without human intervention.
 
+# Project Architecture
+
+The application follows a server-side process pattern where a `FastAPI` service acts as the central controller connecting the user, the AI (Gemini) and the deployment infrastructure (GitHub) 
+
+### Core Components 
+- **Task Receiver (fastAPI)**: It exposes `POST/ready` endpoint to receive task specifications, validates security secrets and manages conconcurrency using a semaphore (limited to 2 concurrent tasks by defaults)
+- **AI (Google Gemini API)**:
+    * **Round 1**: Generates a complete single-page application (HTML/JS/CSS), README.md, and LICENSE.
+    * **Round 2+**: Performs "surgical updates" by reading the existing index.html and applying specific changes requested in the new brief.
+- **Version Control Agent (GitPython)**: Manages local git repositories. It handles initializing new repos, cloning existing ones (for multi-round development), committing changes, and pushing to GitHub.
+- **Deployment Manager**: Interacts with the GitHub API to create remote repositories and configure GitHub Pages for live hosting.
+
+### Data Flow & Logic
+
+
+# Prerequisites
+
+Before running autodev ensure you have the followings:
+
+1. **Python 3.10++** installed
+2. **Git** is installed and configured in your machine
+
 
 # How to set this 
 
@@ -13,12 +35,22 @@ Powered by Google's **Gemini 2.0 Flash** (via API) it takes the tasks and genera
    * Create a token (Classic or Fine-grained) with **repo**, **workflow**, **admin:repo_hook**, and **pages**   permissions.
 3. Next create a gemini api key (this code will only work for gemini api) [Google AI Studio](https://aistudio.google.com/).
 4. Set a secret key which is required and necessary
+5. Set up environment variables
+   * Create a `.env` file in the root directory, copy the format from the given `env.txt` as a template and add the specific keys --
+     ```GEMINI_API_KEY="your_gemini_api_key_here"
+      GITHUB_TOKEN="your_github_pat_here"
+      GITHUB_USERNAME="your_github_username"
+      STUDENT_SECRET="my_secure_secret_key"
+     ```
 
 # How can you use it locally on your machine
 
 1. Install python and installs the packages using ```pip install -r requirements.txt``` (I will suggest you to create a virtual environment and use it so that you don't mess up with your global python)
-2. Then run ```uvicorn main:app --reload``` to run the code
-3.  If you click on the localhost link you should get a ```INFO: 127.0.0.1:1415 - "GET / HTTP/1.1" 200 OK``` and also a message in a json format in the browser
+    * Create virtual environment `python -m venv venv`
+    * Activate it `venv/Scripts/activate`
+    * Install requitrements `pip install -r requirements.txt`
+3. Then run ```uvicorn main:app --reload``` to run the code
+4.  If you click on the localhost link you should get a ```INFO: 127.0.0.1:1415 - "GET / HTTP/1.1" 200 OK``` and also a message in a json format in the browser
  ```
 {
   "message": "Task Receiver Service running. POST /ready to submit."
@@ -55,3 +87,33 @@ Powered by Google's **Gemini 2.0 Flash** (via API) it takes the tasks and genera
    }
    ```
  5. And wait for few seconds to minute (the time will be directly proportional to the intensity of task)
+
+# Run on Hugging Face Spaces
+
+This application is ready to run on Hugging Face Spaces using using the Docker SDK.
+
+1. **Create a New Space**
+   * Go to [Hugging Face Spaces](https://huggingface.co/spaces) and create a new Space.
+   * Select **Docker** as the Space SDK.
+   * Choose "Blank" as the template.
+2. **Upload the code**
+   * Push all the files from this repositary to your new space.
+3. **Configure Secrets**
+   * Navigate to the **Settings** tab of your Space.
+    * Scroll down to the **Variables and secrets** section.
+    * Add the following **New Secrets** (copy the values from your local `.env` file):
+        * `GEMINI_API_KEY`
+        * `GITHUB_TOKEN`
+        * `GITHUB_USERNAME`
+        * `STUDENT_SECRET`
+4. **Launch**:
+   * The Space will automatically build and start.
+#  Techstack 
+- Language: **Python 3.10+** (referred in `dockerfile`)
+- Web Framework: **FastAPI** (referenced in `requirements.txt` and imported in `main.py`)
+- ASGI Server: **Uvicorn**
+- AI Provider: **gemini-2.5-flash-preview-05-20** (Uses standard HTTP requests via `httpx` rather than the official SDK to interact with the API.)
+- Validation: **Pydantic** (used for data modeling and environment settings)
+- Settings management: **pydantic-settings** and **python-dotenv** (for managing `.env` file)
+- Version Control System: **GIT** managed by **GitPython**
+- External APIs: GitHub API (responsible for creating)
