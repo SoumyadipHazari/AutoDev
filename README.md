@@ -17,6 +17,20 @@ The application follows a server-side process pattern where a `FastAPI` service 
 
 ### Data Flow & Logic
 
+1. **Authentication**: Every request is checked and matched with `STUDENT_SECRET` environment varible and mismatches are rejected immediately.
+2. **Assest Handling**: If the request includes attachments (images/mockups), the system fetches them via HTTP or decodes Base64 data, then passes them to Gemini's vision capabilities to guide code generation.
+3. **Cleaning**: Generated code is cleaned (Unicode/HTML entity decoding) before being saved to the local file system.
+4.  **Feedback Generation**: After successful deployment, the system sends a webhook notification to an `evaluation_url` with the live URL and repo details, enabling automated testing.
+
+# How It Works:
+
+1. **Submission**: User sends a JSON payload to `/ready` with a task description and round number.
+2. **Preparation**: The server sets up a local directory. If it's Round 1, it initializes a new Git repo. If it's Round 2+, it clones the existing repo to preserve history.
+3. **Generation**: The system constructs a prompt (including any attached images) and sends it to Gemini. Gemini returns the raw code for the web app.
+4. **Execution**: The code is saved locally. The Git agent adds all files, creates a commit (e.g., "Task - Round 1"), and pushes to the `main` branch on GitHub.
+5. **Deployment**: The system calls the GitHub API to enable GitHub Pages on the main branch, making the site live.
+6. **Completion**: The server notifies the evaluation webhook and returns the final URLs to the user.
+
 
 # Prerequisites
 
