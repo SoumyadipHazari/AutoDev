@@ -31,6 +31,9 @@ The application follows a server-side process pattern where a `FastAPI` service 
 5. **Deployment**: The system calls the GitHub API to enable GitHub Pages on the main branch, making the site live.
 6. **Completion**: The server notifies the evaluation webhook and returns the final URLs to the user.
 
+## Architecture Illustration:
+
+![Illustration](architecture.png)
 
 # Prerequisites
 
